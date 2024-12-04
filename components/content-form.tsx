@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -8,15 +8,22 @@ import { Label } from '@/components/ui/label'
 import { processContent, type FormData } from '@/lib/actions'
 import { Loader2 } from 'lucide-react'
 
+interface Options {
+  improveGrammar: boolean
+  makeCreative: boolean
+  makeProfessional: boolean
+  keepLength: boolean
+}
+
 export function ContentForm() {
   const [content, setContent] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<string>('')
-  const [options, setOptions] = useState({
+  const [options, setOptions] = useState<Options>({
     improveGrammar: false,
     makeCreative: false,
     makeProfessional: false,
-    translateToSpanish: false,
+    keepLength: false,
   })
 
   async function onSubmit(e: React.FormEvent) {
@@ -46,10 +53,9 @@ export function ContentForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-8">
       <div className="space-y-2">
-        <Label htmlFor="content">Your Content</Label>
         <Textarea
           id="content"
-          placeholder="Enter your content here..."
+          placeholder="excellent words..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className="min-h-[200px]"
@@ -59,61 +65,33 @@ export function ContentForm() {
 
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="improveGrammar"
-              checked={options.improveGrammar}
-              onCheckedChange={(checked) =>
-                setOptions((prev) => ({
-                  ...prev,
-                  improveGrammar: checked === true,
-                }))
-              }
-            />
-            <Label htmlFor="improveGrammar">Improve Grammar</Label>
-          </div>
+          <OptionCheckbox
+            label="Grammar"
+            optionId="improveGrammar"
+            setOptions={setOptions}
+            options={options}
+          />
 
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="makeCreative"
-              checked={options.makeCreative}
-              onCheckedChange={(checked) =>
-                setOptions((prev) => ({
-                  ...prev,
-                  makeCreative: checked === true,
-                }))
-              }
-            />
-            <Label htmlFor="makeCreative">Make Creative</Label>
-          </div>
+          <OptionCheckbox
+            label="More Creative"
+            optionId="makeCreative"
+            setOptions={setOptions}
+            options={options}
+          />
 
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="makeProfessional"
-              checked={options.makeProfessional}
-              onCheckedChange={(checked) =>
-                setOptions((prev) => ({
-                  ...prev,
-                  makeProfessional: checked === true,
-                }))
-              }
-            />
-            <Label htmlFor="makeProfessional">Make Professional</Label>
-          </div>
+          <OptionCheckbox
+            label="More Professional"
+            optionId="makeProfessional"
+            setOptions={setOptions}
+            options={options}
+          />
 
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="keepLength"
-              checked={options.translateToSpanish}
-              onCheckedChange={(checked) =>
-                setOptions((prev) => ({
-                  ...prev,
-                  translateToSpanish: checked === true,
-                }))
-              }
-            />
-            <Label htmlFor="keepLength">Keep Length</Label>
-          </div>
+          <OptionCheckbox
+            label="Keep Length"
+            optionId="keepLength"
+            setOptions={setOptions}
+            options={options}
+          />
         </div>
       </div>
 
@@ -124,16 +102,46 @@ export function ContentForm() {
             Processing...
           </>
         ) : (
-          'Process Content'
+          'Improve this writing'
         )}
       </Button>
 
       {result && (
         <div className="mt-8 p-4 rounded-lg bg-muted">
-          <Label>Result:</Label>
+          <Label>Suggestions:</Label>
           <p className="mt-2 whitespace-pre-wrap">{result}</p>
         </div>
       )}
     </form>
+  )
+}
+
+interface OptionCheckboxProps {
+  label: string
+  optionId: keyof Options
+  options: Options
+  setOptions: Dispatch<SetStateAction<Options>>
+}
+
+function OptionCheckbox({
+  label,
+  optionId,
+  options,
+  setOptions
+}: OptionCheckboxProps) {
+  return (
+    <div className="flex items-center space-x-2">
+      <Checkbox
+        id={optionId}
+        checked={options[optionId]}
+        onCheckedChange={(checked) =>
+          setOptions((prev) => ({
+            ...prev,
+            [optionId]: checked === true,
+          }))
+        }
+      />
+      <Label htmlFor={optionId}>{label}</Label>
+    </div>
   )
 }

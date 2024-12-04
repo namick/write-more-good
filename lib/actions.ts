@@ -7,34 +7,33 @@ const FormSchema = z.object({
   improveGrammar: z.boolean().default(false),
   makeCreative: z.boolean().default(false),
   makeProfessional: z.boolean().default(false),
-  translateToSpanish: z.boolean().default(false),
+  keepLength: z.boolean().default(false),
 })
+
 
 export type FormData = z.infer<typeof FormSchema>
 
 export async function processContent(data: FormData) {
   const result = FormSchema.safeParse(data)
-  
+
   if (!result.success) {
     return { error: "Invalid form data" }
   }
 
   try {
-    // Here you would typically make a call to your AI API
-    // For now, we'll just return a mock response
     console.log("Processing content:", data)
-    
+
     return {
       success: true,
       message: "Content processed successfully",
       data: {
         originalContent: data.content,
-        processedContent: `Processed: ${data.content}`,
+        processedContent: `${data.content} with changes...`,
         options: {
           improveGrammar: data.improveGrammar,
           makeCreative: data.makeCreative,
           makeProfessional: data.makeProfessional,
-          translateToSpanish: data.translateToSpanish,
+          keepLength: data.keepLength,
         }
       }
     }
