@@ -15,8 +15,11 @@ interface Options {
   keepLength: boolean
 }
 
+const defaultContent = `
+If our future contains a shining angel of light, so brilliant that the whole world bends the knee, the only way to end this mini-boss might be to understand what it truly is.  It isn't the still small voice, the God-observer inside each of us, but rather an imposter observer made out of bits of the material world.  It may be that for humanity to get past this next mini-boss, we have to develop a new understanding and science about consciousness. I think we are close to that paradigm shift, a new scientific understanding of mind, on the cusp even.  And not a moment too soon.`
+
 export function ContentForm() {
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState(defaultContent)
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<string>('')
   const [options, setOptions] = useState<Options>({
@@ -127,7 +130,7 @@ function OptionCheckbox({
   label,
   optionId,
   options,
-  setOptions
+  setOptions,
 }: OptionCheckboxProps) {
   return (
     <div className="flex items-center space-x-2">
